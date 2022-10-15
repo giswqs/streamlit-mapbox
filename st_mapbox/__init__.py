@@ -84,15 +84,19 @@ def st_mapbox(name, key=None):
 if not _RELEASE:
     import streamlit as st
 
-    st.subheader("Component with constant args")
+    st.set_page_config(layout="wide")
+
+    st.subheader("Streamlit Mapbox")
+    st.write("Bidirectional communication between Streamlit and Mapbox GL JS")
 
     # Create an instance of our component with a constant `name` arg, and
     # print its output value.
-    num_clicks = st_mapbox("World")
-    st.markdown("You've clicked %s times!" % int(num_clicks))
+    token = "your-access-token"
+    location = st_mapbox(token)
+    st.markdown("You've clicked: %s" % location)
 
-    st.markdown("---")
-    st.subheader("Component with variable args")
+    # st.markdown("---")
+    # st.subheader("Component with variable args")
 
     # Create a second instance of our component whose `name` arg will vary
     # based on a text_input widget.
@@ -102,6 +106,6 @@ if not _RELEASE:
     # it is considered a new instance and will be re-mounted on the frontend
     # and lose its current state. In this case, we want to vary the component's
     # "name" argument without having it get recreated.
-    name_input = st.text_input("Enter a name", value="Streamlit")
-    num_clicks = st_mapbox(name_input, key="foo")
-    st.markdown("You've clicked %s times!" % int(num_clicks))
+    # name_input = st.text_input("Enter a name", value="Streamlit")
+    # num_clicks = st_mapbox(name_input, key="foo")
+    # st.markdown("You've clicked %s times!" % int(num_clicks))

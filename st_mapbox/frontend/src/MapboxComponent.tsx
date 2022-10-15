@@ -4,17 +4,43 @@ import {
   withStreamlitConnection,
 } from "streamlit-component-lib"
 import React, { ReactNode } from "react"
+// import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import ReactMapboxGl from "react-mapbox-gl";
+import DrawControl from "react-mapbox-gl-draw";
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+
 
 interface State {
   numClicks: number
   isFocused: boolean
 }
 
+
+const Map = ReactMapboxGl({
+  accessToken:
+  "your-access-token"
+});
+
+
 /**
  * This is a React-based component template. The `render()` function is called
  * automatically when your component should be re-rendered.
  */
 class MapboxComponent extends StreamlitComponentBase<State> {
+  onDrawCreate = ({ features }: any) => {
+    Streamlit.setComponentValue(features);
+  };
+
+  // onDrawCreate = ({ features }: any) => {
+  //   console.log(features);
+  // };
+
+  onDrawUpdate = ({ features }: any) => {
+    console.log({ features });
+  };
+  
+
+
   public state = { numClicks: 0, isFocused: false }
 
   public render = (): ReactNode => {
@@ -40,45 +66,45 @@ class MapboxComponent extends StreamlitComponentBase<State> {
       style.outline = borderStyling
     }
 
+
     // Show a button and some text.
     // When the button is clicked, we'll increment our "numClicks" state
     // variable, and send its new value back to Streamlit, where it'll
     // be available to the Python program.
     return (
-      <span>
-        Hello, {name}! &nbsp;
-        <button
-          style={style}
-          onClick={this.onClicked}
-          disabled={this.props.disabled}
-          onFocus={this._onFocus}
-          onBlur={this._onBlur}
+      <div>
+        <Map
+          style="mapbox://styles/mapbox/streets-v9" // eslint-disable-line
+          containerStyle={{
+            height: "600px",
+            width: "100vw"
+          }}
         >
-          Click Me!
-        </button>
-      </span>
-    )
+          <DrawControl onDrawCreate={this.onDrawCreate} onDrawUpdate={this.onDrawUpdate} />
+        </Map>
+      </div>
+    );
   }
 
-  /** Click handler for our "Click Me!" button. */
-  private onClicked = (): void => {
-    // Increment state.numClicks, and pass the new value back to
-    // Streamlit via `Streamlit.setComponentValue`.
-    this.setState(
-      (prevState) => ({ numClicks: prevState.numClicks + 1 }),
-      () => Streamlit.setComponentValue(this.state.numClicks)
-    )
-  }
+  // /** Click handler for our "Click Me!" button. */
+  // private onClicked = (): void => {
+  //   // Increment state.numClicks, and pass the new value back to
+  //   // Streamlit via `Streamlit.setComponentValue`.
+  //   this.setState(
+  //     (prevState) => ({ numClicks: prevState.numClicks + 1 }),
+  //     () => Streamlit.setComponentValue(this.state.numClicks)
+  //   )
+  // }
 
-  /** Focus handler for our "Click Me!" button. */
-  private _onFocus = (): void => {
-    this.setState({ isFocused: true })
-  }
+  // /** Focus handler for our "Click Me!" button. */
+  // private _onFocus = (): void => {
+  //   this.setState({ isFocused: true })
+  // }
 
-  /** Blur handler for our "Click Me!" button. */
-  private _onBlur = (): void => {
-    this.setState({ isFocused: false })
-  }
+  // /** Blur handler for our "Click Me!" button. */
+  // private _onBlur = (): void => {
+  //   this.setState({ isFocused: false })
+  // }
 }
 
 // "withStreamlitConnection" is a wrapper function. It bootstraps the
